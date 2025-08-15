@@ -1,0 +1,39 @@
+{
+  "name": "repos",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/server/app.js",
+  "scripts": {
+    "start": "node src/server/app.js",
+    "start:prod": "./electerm-repos.sh",
+    "lint": "standard",
+    "fix": "standard --fix",
+    "test": "node build/test.js",
+    "test:server": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electerm/repos.git"
+  },
+  "author": "ZHAO Xudong <zxdong@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/electerm/repos/issues"
+  },
+  "homepage": "https://github.com/electerm/repos#readme",
+  "description": "electerm repos server",
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "standard": "^17.1.0"
+  },
+  "standard": {
+    "ignore": [
+      "temp/**",
+      "repos/**",
+      "node_modules/**"
+    ]
+  }
+}
