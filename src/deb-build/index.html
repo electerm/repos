@@ -74,6 +74,39 @@
             font-family:'Courier New',monospace;
             font-size:14px;
             line-height:1.5;
+            position:relative;
+        }
+        
+        .copy-button{
+            position:absolute;
+            top:10px;
+            right:10px;
+            background:#f8f9fa;
+            color:#6c757d;
+            border:1px solid #dee2e6;
+            border-radius:4px;
+            padding:6px 12px;
+            font-size:12px;
+            cursor:pointer;
+            opacity:0.7;
+            transition:all 0.2s ease;
+            z-index:10;
+        }
+        
+        .copy-button:hover{
+            opacity:1;
+            background:#e9ecef;
+            color:#495057;
+        }
+        
+        .copy-button:active{
+            transform:scale(0.95);
+        }
+        
+        .copy-button.copied{
+            background:#d1ecf1;
+            color:#0c5460;
+            border-color:#bee5eb;
         }
         
         .install-card{
@@ -289,22 +322,28 @@
                 <h3><span class="step-number">1</span>Add Repository</h3>
                 <p>Add the Electerm Debian repository to your system:</p>
                 
-                <div class="code-block"><pre># Add the GPG key
+                <div class="code-block">
+                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                    <pre># Add the GPG key
 curl -fsSL https://electerm-repos.html5beta.com/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg
 
 # Add the repository
-echo "deb [signed-by=/usr/share/keyrings/electerm.gpg] https://electerm-repos.html5beta.com/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list</pre></div>
+echo "deb [signed-by=/usr/share/keyrings/electerm.gpg] https://electerm-repos.html5beta.com/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list</pre>
+                </div>
             </div>
             
             <div class="install-card">
                 <h3><span class="step-number">2</span>Update & Install</h3>
                 <p>Update your package list and install Electerm:</p>
                 
-                <div class="code-block"><pre># Update package list
+                <div class="code-block">
+                    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                    <pre># Update package list
 sudo apt update
 
 # Install Electerm
-sudo apt install electerm</pre></div>
+sudo apt install electerm</pre>
+                </div>
                 
                 <div class="success">
                     <strong>✅ That's it!</strong> Electerm will be installed and automatically updated through your system's package manager.
@@ -361,7 +400,10 @@ sudo apt install electerm</pre></div>
                 
                 <div class="warning">
                     <strong>GPG Key Error:</strong> If you get GPG verification errors, try refreshing the key:
-                    <div class="code-block"><pre>curl -fsSL https://electerm-repos.html5beta.com/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg</pre></div>
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                        <pre>curl -fsSL https://electerm-repos.html5beta.com/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg</pre>
+                    </div>
                 </div>
                 
                 <div class="info">
@@ -418,6 +460,88 @@ sudo apt install electerm</pre></div>
             </div>
         </div>
     </div>
+    
+    <!-- Copy to Clipboard Script -->
+    <script>
+        function copyToClipboard(button) {
+            // Find the pre element that's a sibling of the button
+            const codeBlock = button.parentElement;
+            const preElement = codeBlock.querySelector('pre');
+            
+            if (!preElement) {
+                console.error('No pre element found');
+                return;
+            }
+            
+            // Get the text content from the pre element
+            const textToCopy = preElement.textContent || preElement.innerText;
+            
+            // Use the modern Clipboard API if available
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopySuccess(button);
+                }).catch(err => {
+                    console.error('Failed to copy using Clipboard API:', err);
+                    fallbackCopyToClipboard(textToCopy, button);
+                });
+            } else {
+                // Fallback for older browsers or non-secure contexts
+                fallbackCopyToClipboard(textToCopy, button);
+            }
+        }
+        
+        function fallbackCopyToClipboard(text, button) {
+            // Create a temporary textarea element
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess(button);
+                } else {
+                    showCopyError(button);
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                showCopyError(button);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopySuccess(button) {
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }
+        
+        function showCopyError(button) {
+            const originalText = button.textContent;
+            button.textContent = 'Error';
+            button.style.background = '#f8d7da';
+            button.style.color = '#721c24';
+            button.style.borderColor = '#f5c6cb';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '#f8f9fa';
+                button.style.color = '#6c757d';
+                button.style.borderColor = '#dee2e6';
+            }, 2000);
+        }
+    </script>
     
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NT5W8GL31W"></script>
