@@ -3,6 +3,12 @@ export default {
     const url = new URL(request.url);
     let path = url.pathname;
 
+    // Redirect old domain to new domain (308 preserves path, method, and body)
+    if (url.hostname === "electerm-repos.html5beta.com") {
+      url.hostname = "repos.electerm.org";
+      return Response.redirect(url.toString(), 308);
+    }
+
     // API endpoint for country detection
     if (path === "/api/country") {
       const country = (request.cf && request.cf.country) || "";
