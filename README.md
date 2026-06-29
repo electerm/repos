@@ -154,7 +154,7 @@ CMD ["npm", "start"]
 ```nginx
 server {
     listen 80;
-    server_name electerm-repos.html5beta.com;
+    server_name repos.electerm.org;
     
     location / {
         proxy_pass http://localhost:3000;
@@ -172,7 +172,7 @@ server {
 
 ## Repository URLs
 
-- **Production**: `https://electerm-repos.html5beta.com/deb`
+- **Production**: `https://repos.electerm.org/deb`
 - **Local Development**: `http://localhost:3000/deb`
 
 ## Adding to APT Sources
@@ -181,10 +181,10 @@ Users can add the repository to their system with:
 
 ```bash
 # Add the GPG key
-curl -fsSL https://electerm-repos.html5beta.com/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg
+curl -fsSL https://repos.electerm.org/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg
 
 # Add the repository
-echo "deb [signed-by=/usr/share/keyrings/electerm.gpg] https://electerm-repos.html5beta.com/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list
+echo "deb [signed-by=/usr/share/keyrings/electerm.gpg] https://repos.electerm.org/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list
 
 # Update package list
 sudo apt update

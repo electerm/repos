@@ -1,0 +1,13 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../
+rm -rf public
+mkdir public
+echo "copy files"
+npm run cp
+echo "build css"
+npm run build-css
+echo "build html"
+HOST=https://repos.electerm.org npm run build-html
+echo "build sitemap"
+npm run sitemap

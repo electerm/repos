@@ -1,0 +1,66 @@
+# electerm
+
+> Open-sourced terminal/ssh/sftp/telnet/serialport/RDP/VNC/Spice/ftp client(linux, mac, win).
+
+## Key Features
+
+
+- Works as a terminal/file manager or ssh/sftp/ftp/telnet/serialport/RDP/VNC/Spice client
+- Support Window 7+(X64/ARM64), Mac OS 10.15+(x64/arm64), Linux(x64/arm64), even old Linux with glibc 2.17+ like UOS/Kylin/Ubuntu 18.04 etc
+- Global hotkey to toggle window visibility (similar to guake, default is `ctrl + 2`)
+- Multi platform(linux, mac, win)
+- 🇺🇸 🇨🇳 🇧🇷 🇷🇺 🇪🇸 🇫🇷 🇹🇷 🇭🇰 🇯🇵 🇸🇦 🇩🇪 🇰🇷 🇮🇩 🇵🇱 Multi-language support([electerm-locales](https://github.com/electerm/electerm-locales), contributions/fixes welcome)
+- Double click to directly edit (small) remote files.
+- Auth with publicKey + password.
+- Support Zmodem(rz, sz).
+- Support ssh tunnel.
+- Support [Trzsz](https://github.com/trzsz/trzsz)(trz/tsz), similar to rz/sz, and compatible with tmux.
+- Transparent window(Mac, win).
+- Terminal background image.
+- Global/session proxy.
+- Quick commands
+- UI/terminal theme
+- Sync bookmarks/themes/quick commands to github/gitee secret gist/webdav/custom server/electerm cloud
+- Quick input to one or all terminals.
+- AI assistant integration (supporting [DeepSeek](https://www.deepseek.com), OpenAI, and other AI APIs) to help with command suggestions, script writing, and explaining selected terminal content
+- MCP (Model Context Protocol) widget for AI assistants and external tools integration - see [MCP Widget Usage Guide](https://github.com/electerm/electerm/wiki/MCP-Widget-Usage-Guide)
+- Deep link support: Open connections with URLs like `telnet://192.168.2.31:34554` or `ssh://user@host:22` - see [Deep link support wiki](https://github.com/electerm/electerm/wiki/Deep-link-support)
+- Command line usage: check [wiki](https://github.com/electerm/electerm/wiki/Command-line-usage)
+
+## Main Pages
+
+- [Home Page](https://electerm.org/) - Main landing page with download links
+- [Video Guides](https://electerm.org/videos) - Tutorial videos and demos
+- [Debian Repository](https://electerm.org/deb) - APT repository setup for Debian/Ubuntu
+- [Sponsor](https://electerm.org/sponsor-electerm.html) - Support electerm development
+
+## Download Links
+
+- [Windows Downloads](https://electerm.org/#windows) - Installer and portable versions
+- [macOS Downloads](https://electerm.org/#mac) - DMG for Intel and Apple Silicon
+- [Linux Downloads](https://electerm.org/#linux) - DEB, RPM, AppImage, Snap packages
+
+## Documentation
+
+- [GitHub Repository](https://github.com/electerm/electerm) - Source code and issue tracker
+- [Wiki](https://github.com/electerm/electerm/wiki) - Documentation and guides
+- [Known Issues](https://github.com/electerm/electerm/wiki/Know-issues) - Current limitations
+- [Troubleshooting](https://github.com/electerm/electerm/wiki/Troubleshoot) - Common solutions
+- [Discussions](https://github.com/electerm/electerm/discussions) - Community forum
+
+## Related Projects
+
+- [electerm-web](https://github.com/electerm/electerm-web) - Web-based version
+- [electerm-web-docker](https://github.com/electerm/electerm-web-docker) - Docker deployment
+- [electerm-locales](https://github.com/electerm/electerm-locales) - Language packs
+
+## Store Links
+
+- [Windows Store](https://www.microsoft.com/store/apps/9NCN7272GTFF) - Microsoft Store listing
+- [Snap Store](https://snapcraft.io/electerm) - Snap package
+
+## Contact
+
+- [Report Issues](https://github.com/electerm/electerm/issues)
+- [Feature Requests](https://github.com/electerm/electerm/discussions)
+- [Email](mailto:zxdong@gmail.com)

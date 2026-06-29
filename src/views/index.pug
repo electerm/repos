@@ -1,0 +1,70 @@
+doctype html
+html(lang=langCode)
+  head
+    title #{siteName} - Debian APT Repository
+    meta(name='description', content=desc)
+    meta(name='keywords', content=keywords)
+    meta(property='og:title' content='electerm - Debian APT Repository')
+    meta(property='og:description' content=desc)
+    meta(name='twitter:title' content='electerm - Debian APT Repository')
+    meta(name='twitter:description' content=desc)
+    include ./parts/react-header
+  body
+    include ./parts/header
+
+    section.hero
+      .container
+        img.hero-logo(src='https://electerm.org/electerm.png', alt='electerm')
+        h1 electerm #{lang.debTitle}
+        p.hero-tagline #{lang.debSubtitle}
+        .hero-cta
+          a.hero-btn.hero-btn-primary(href='/deb/')
+            | #{lang.heroSetupRepo}
+          a.hero-btn.hero-btn-secondary(href='https://electerm.org', target='_blank', rel='noreferrer')
+            | #{lang.heroVisitHome}
+
+    section.repos-section
+      .container
+        .section-header
+          h2 #{lang.reposTitle}
+          p #{lang.reposSubtitle}
+        .repos-grid
+          .repo-card
+            .repo-icon 🐧
+            h3 #{lang.repoDebName}
+            p #{lang.repoDebDesc}
+            a.repo-link(href='/deb/') #{lang.repoSetupLink} →
+          .repo-card.repo-card-future
+            .repo-icon 🚧
+            h3 #{lang.repoMoreTitle}
+            p #{lang.repoMoreDesc}
+            span.repo-coming-soon #{lang.repoComingSoon}
+
+    section.links-section
+      .container
+        .section-header
+          h2 #{lang.linksTitle}
+          p #{lang.linksSubtitle}
+        .links-grid
+          .link-category
+            h3 #{lang.categoryOfficial}
+            ul.link-list
+              li: a(href='https://electerm.org', target='_blank', rel='noreferrer') electerm.org
+              li: a(href='https://github.com/electerm/electerm', target='_blank', rel='noreferrer') GitHub
+              li: a(href='https://github.com/electerm/electerm/releases', target='_blank', rel='noreferrer') #{lang.linkReleases}
+          .link-category
+            h3 #{lang.categoryResources}
+            ul.link-list
+              li: a(href='/deb/') #{lang.footerDebianRepo}
+              li: a(href='https://github.com/electerm/electerm/wiki', target='_blank', rel='noreferrer') #{lang.linkWiki}
+              li: a(href='https://github.com/electerm/electerm/wiki/Know-issues', target='_blank', rel='noreferrer') #{lang.linkKnownIssues}
+          .link-category
+            h3 #{lang.categoryCommunity}
+            ul.link-list
+              li: a(href='https://github.com/electerm/electerm/discussions', target='_blank', rel='noreferrer') #{lang.linkDiscussions}
+              li: a(href='https://github.com/electerm/electerm/issues', target='_blank', rel='noreferrer') #{lang.linkIssues}
+              li: a(href='https://electerm.org/sponsor-electerm/', target='_blank', rel='noreferrer') #{lang.linkSponsor}
+
+    #container
+    include ./parts/footer
+    include ./parts/react-footer

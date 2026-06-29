@@ -1,0 +1,27 @@
+footer.site-footer
+  .container
+    .footer-grid
+      .footer-brand
+        .footer-brand-name
+          img(src='https://electerm.org/electerm.png', alt='electerm')
+          span electerm
+        p #{lang.footerBrandDesc}
+      .footer-col
+        h4 #{lang.footerProduct}
+        ul
+          li: a(href='https://electerm.org', target='_blank', rel='noreferrer') #{lang.footerElecterm}
+          li: a(href='https://github.com/electerm/electerm/releases', target='_blank', rel='noreferrer') #{lang.footerDownloads}
+          li: a(href='/deb/') #{lang.footerDebianRepo}
+      .footer-col
+        h4 #{lang.footerCommunity}
+        ul
+          li: a(href='https://github.com/electerm/electerm', target='_blank', rel='noreferrer') #{lang.footerGithub}
+          li: a(href='https://github.com/electerm/electerm/discussions', target='_blank', rel='noreferrer') #{lang.footerDiscussions}
+          li: a(href='https://github.com/electerm/electerm/issues', target='_blank', rel='noreferrer') #{lang.footerReportIssues}
+          li: a(href='https://electerm.org/sponsor-electerm/', target='_blank', rel='noreferrer') #{lang.footerSponsor}
+    .footer-bottom
+      p © 2025 ZHAO Xudong. MIT License.
+      .footer-bottom-links
+        a(href='/privacy-policy/') #{lang.footerPrivacyPolicy}
+        a(href='https://html5beta.com', target='_blank', rel='noreferrer') #{lang.footerAuthor}
+        a(href='http://github.com/zxdong262', target='_blank', rel='noreferrer') GitHub

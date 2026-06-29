@@ -1,0 +1,45 @@
+header.site-header
+  .container.header-inner
+    a.header-logo(href='/')
+      img(src='https://electerm.org/electerm.png', alt='electerm')
+
+    nav.header-nav
+      a(href='https://electerm.org', target='_blank', rel='noreferrer') #{lang.headerElecterm}
+      a(href='/deb/') #{lang.headerDebianRepo}
+      a(href='/privacy-policy/') #{lang.headerPrivacy}
+      a(href='https://github.com/electerm/electerm', target='_blank', rel='noreferrer') GitHub
+
+    .header-actions
+      .lang-dropdown
+        button.lang-toggle(type='button', onclick='this.parentElement.classList.toggle("open")')
+          span.flag #{currFlag}
+          span #{langCode}
+          span.arrow ▾
+        .lang-menu
+          each item in langs
+            a(href=`${item.url}${currentPage}`)
+              span.flag #{item.flag}
+              span #{item.name}
+      button.mobile-menu-btn(type='button', onclick='document.querySelector(".mobile-nav").classList.toggle("open")')
+        svg(width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+          line(x1='3' y1='6' x2='21' y2='6')
+          line(x1='3' y1='12' x2='21' y2='12')
+          line(x1='3' y1='18' x2='21' y2='18')
+
+nav.mobile-nav
+  a(href='https://electerm.org', target='_blank', rel='noreferrer') #{lang.headerElecterm}
+  a(href='/deb/') #{lang.headerDebianRepo}
+  a(href='/privacy-policy/') #{lang.headerPrivacy}
+  a(href='https://github.com/electerm/electerm', target='_blank', rel='noreferrer') GitHub
+  h4(style='padding:16px 0 8px;font-size:0.85rem;color:var(--color-text-secondary)') #{lang.headerLanguages}
+  .mobile-lang-list
+    each item in langs
+      a(href=`${item.url}${currentPage}`)
+        span.flag #{item.flag}
+        span #{item.name}
+
+script.
+  document.addEventListener('click', function(e) {
+    var dd = document.querySelector('.lang-dropdown');
+    if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+  })

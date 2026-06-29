@@ -1,15 +1,21 @@
 {
-  "name": "repos",
+  "name": "electerm-repos",
   "version": "1.0.0",
+  "description": "Electerm repository server - https://repos.electerm.org",
   "type": "module",
-  "main": "src/server/app.js",
   "scripts": {
-    "start": "node src/server/app.js",
-    "start:prod": "./electerm-repos.sh",
-    "lint": "standard",
+    "start": "npm run dev",
+    "b": "./bin/build",
+    "build": "./bin/build",
+    "build-css": "node bin/build-css.js",
+    "build-html": "node bin/build-html.js",
+    "deb": "node bin/build-deb.js",
+    "down": "node bin/fetch-release-info.js",
+    "sitemap": "node bin/sitemap.js",
+    "cp": "cp -r src/static/* public/",
+    "dev": "node bin/dev-server.js",
     "fix": "standard --fix",
-    "test": "node build/test.js",
-    "test:server": "echo \"Error: no test specified\" && exit 1"
+    "lint": "standard"
   },
   "repository": {
     "type": "git",
@@ -20,20 +26,27 @@
   "bugs": {
     "url": "https://github.com/electerm/repos/issues"
   },
-  "homepage": "https://github.com/electerm/repos#readme",
-  "description": "electerm repos server",
-  "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1"
-  },
+  "homepage": "https://repos.electerm.org",
   "devDependencies": {
-    "standard": "^17.1.0"
+    "axios": "^1.18.0",
+    "dayjs": "^1.11.21",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "morgan": "^1.11.0",
+    "pug": "^3.0.4",
+    "sitemaps": "^2.0.6",
+    "standard": "^17.1.2",
+    "stylus": "^0.64.0"
   },
   "standard": {
     "ignore": [
-      "temp/**",
-      "repos/**",
-      "node_modules/**"
-    ]
+      "*.html",
+      "/public",
+      "/node_modules"
+    ],
+    "parserOptions": {
+      "requireConfigFile": false,
+      "sourceType": "module"
+    }
   }
 }
