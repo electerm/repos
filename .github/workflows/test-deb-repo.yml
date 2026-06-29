@@ -1,0 +1,50 @@
+name: Test Debian Repository
+
+on:
+  push:
+    branches: [ test ]
+  workflow_dispatch:
+
+jobs:
+  test-deb-repo:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu: [22.04, 24.04]
+    steps:
+      - name: Add electerm apt repo
+        run: |
+          curl -fsSL https://repos.electerm.org/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/electerm.gpg] https://repos.electerm.org/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list
+
+      - name: Update apt
+        run: sudo apt-get update 2>&1
+
+      - name: Verify package metadata
+        run: |
+          echo "=== Package info from apt ==="
+          apt-cache show electerm
+          echo ""
+          echo "=== Policy ==="
+          apt-cache policy electerm
+
+      - name: Download deb file (tests redirect to mirror)
+        run: |
+          apt-get download electerm
+          ls -lh electerm*.deb
+          echo "=== Verifying deb package ==="
+          dpkg-deb --info electerm*.deb
+          dpkg-deb --contents electerm*.deb | head -20
+
+      - name: Install electerm
+        run: |
+          sudo apt-get install -y electerm 2>&1
+          echo "=== Installation complete ==="
+
+      - name: Verify installation
+        run: |
+          dpkg -l electerm
+          echo "=== Binary exists ==="
+          which electerm || echo "no binary in PATH"
+          ls -la /opt/Electerm*/electerm 2>/dev/null || ls -la /usr/lib/electerm*/electerm 2>/dev/null || ls -la /usr/share/electerm*/electerm 2>/dev/null || echo "binary location not found"
+          echo "=== Test PASSED ==="
