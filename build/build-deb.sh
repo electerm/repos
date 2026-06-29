@@ -273,8 +273,8 @@ EOF
 
         echo "Repository files generated successfully!"
 
-        # Delete the actual .deb file since we use it via static file serving
-        echo "Deleting .deb file (will serve via static files)..."
+        # Delete the actual .deb file — it's served via redirect to GitHub releases by worker.js
+        echo "Deleting .deb file (will serve via redirect to GitHub releases)..."
         if [ -f "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME" ]; then
             rm "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME"
             echo "Deleted: $DEB_ASSET_NAME"

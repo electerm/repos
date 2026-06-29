@@ -11,7 +11,7 @@ export default {
       });
     }
 
-    // Handle Debian APT paths - serve directly from ASSETS
+    // Handle Debian APT paths - serve metadata from ASSETS, redirect .deb files to mirror
     if (
       path.startsWith("/deb/dists/") ||
       path.startsWith("/deb/pool/") ||
@@ -24,6 +24,18 @@ export default {
       path === "/cn/deb/InRelease" ||
       path === "/cn/deb/Release.gpg"
     ) {
+      // Redirect .deb file requests to mirror (the .deb is not stored in the pool)
+      if (path.endsWith(".deb")) {
+        // Extract version from filename: electerm-{version}-linux-amd64.deb
+        const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-amd64\.deb$/);
+        if (match) {
+          const version = match[1];
+          const filename = path.split("/").pop();
+          const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
+          const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+          return Response.redirect(redirectUrl, 302);
+        }
+      }
       try {
         return await env.ASSETS.fetch(request);
       } catch (e) {
