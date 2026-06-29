@@ -72,10 +72,13 @@ if [ -n "$DEB_ASSET_NAME" ] && ([ -n "$DEB_ASSET_URL" ] || [ -n "$DEB_FILE_PATH"
         fi
     else
         # Download the .deb file to the pool directory
+        DEB_MIRROR_URL="${DEB_MIRROR_URL:-https://mirror.electerm.org/}"
+        DOWNLOAD_URL="${DEB_MIRROR_URL}${DEB_ASSET_URL}"
+        echo "Using mirror: $DEB_MIRROR_URL"
         echo "Downloading: $DEB_ASSET_NAME"
-        echo "URL: $DEB_ASSET_URL"
+        echo "URL: $DOWNLOAD_URL"
 
-        curl -L -o "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME" "$DEB_ASSET_URL"
+        curl -L -o "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME" "$DOWNLOAD_URL"
         if [ $? -eq 0 ]; then
             echo "Successfully downloaded: $DEB_ASSET_NAME"
             echo "File size: $(stat -c%s "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME" 2>/dev/null || stat -f%z "$DEB_DIR/pool/main/e/electerm/$DEB_ASSET_NAME") bytes"
