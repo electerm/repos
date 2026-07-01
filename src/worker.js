@@ -1,6 +1,13 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Redirect all requests from electerm-repos.html5beta.com to repos.electerm.org
+    if (url.hostname === "electerm-repos.html5beta.com") {
+      const redirectUrl = `https://repos.electerm.org${url.pathname}${url.search}`;
+      return Response.redirect(redirectUrl, 308);
+    }
+
     let path = url.pathname;
 
     // API endpoint for country detection
