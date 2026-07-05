@@ -1,248 +1,175 @@
-# Electerm Repository Server
+# Electerm Repositories
 
-A Node.js Express server for hosting and managing Electerm package repositories, specifically designed to serve Debian packages and repository metadata.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Electerm](https://img.shields.io/badge/Electerm-Repo-blue)](https://repos.electerm.org)
 
-## Overview
+[English](README.md) | [简体中文](README.cn.md)
 
-This server provides:
-- Static file serving for repository files
-- REST API endpoint for creating/updating Debian repositories
-- Automated build process for repository generation
-- GitHub Actions integration for CI/CD
+Official package repository hosting for [Electerm](https://github.com/electerm/electerm) — a terminal/SSH/SFTP/Telnet/Serial/RDP/VNC/Spice client.
 
-## Features
+Live at **<https://repos.electerm.org>**
 
-- **Static File Hosting**: Serves repository files from the `repos` folder
-- **Debian Repository Management**: Automated creation and management of `.deb` package repositories
-- **GitHub Actions Integration**: Accepts repository updates via POST requests from GitHub Actions
-- **ESM Module Support**: Built with modern ES modules
-- **Express.js Framework**: Fast and minimal web framework
+## What This Project Does
 
-## Installation
+This project builds and serves two GPG-signed Linux package repositories:
 
-1. Clone the repository:
-```bash
-git clone https://github.com/electerm/repos.git
-cd repos
-```
+| Repository | Format | Distros | URL |
+|---|---|---|---|
+| Debian/APT | `.deb` | Debian, Ubuntu, etc. | `https://repos.electerm.org/deb` |
+| RPM/YUM | `.rpm` | Fedora, RHEL, CentOS, etc. | `https://repos.electerm.org/rpm` |
 
-2. Install dependencies:
-```bash
-npm install
-```
+Both repositories share the **same GPG public key** for signing and verification. Package files themselves are not stored — the worker redirects `.deb`/`.rpm` download requests to GitHub Releases via a mirror.
 
-3. Start the server:
-```bash
-npm start
-```
+## Tech Stack
 
-The server will start on port 3000 by default (or the port specified in the `PORT` environment variable).
+- **Cloudflare Workers** — production hosting (`src/worker.js`)
+- **Cloudflare Assets** — static file serving (`public/` directory)
+- **Pug** — HTML templating
+- **Stylus** — CSS preprocessing
+- **Express** — local dev server only
+- **GitHub Actions** — CI/CD, auto-deploys on new Electerm releases
 
-## API Endpoints
-
-### GET /
-Root endpoint that provides basic server information and available endpoints.
-
-### GET /health
-Health check endpoint that returns server status and timestamp.
-
-### POST /deb
-Creates or updates a Debian repository with the provided parameters.
-
-**Request Body:**
-```json
-{
-  "releaseInfo": "Release information or metadata",
-  "gpgKeyId": "GPG key identifier",
-  "gpgPrivateKey": "GPG private key for signing"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Debian repository created successfully",
-  "output": "Build script output",
-  "timestamp": "2025-08-15T10:30:00.000Z"
-}
-```
-
-### Static Files
-All files in the `repos` folder are served statically. For example:
-- `https://your-domain.com/deb/` - Debian repository files
-- `https://your-domain.com/deb/public.key` - GPG public key
-
-## Repository Structure
+## Project Structure
 
 ```
+├── .github/workflows/
+│   └── deploy-on-release.yml    # CI/CD: build + deploy to Cloudflare
+├── bin/
+│   ├── build                    # Full build script
+│   ├── build-css.js             # Compile Stylus → CSS
+│   ├── build-html.js            # Compile Pug → HTML (all locales)
+│   ├── build-deb.js             # Build Debian repo metadata
+│   ├── build-rpm.js             # Build RPM repo metadata
+│   ├── fetch-release-info.js    # Fetch latest release from GitHub API
+│   ├── dev-server.js            # Local dev server (Express)
+│   └── sitemap.js               # Generate sitemap.xml
 ├── build/
-│   └── build-deb.sh          # Debian repository build script
-├── repos/                    # Static files served by the server
-│   └── deb/                  # Debian repository (created automatically)
+│   ├── build-deb.sh             # Debian repo build script (dpkg-deb, apt metadata)
+│   └── build-rpm.sh             # RPM repo build script (createrepo_c)
 ├── src/
-│   ├── deb-build/           # Template files for Debian repository
-│   │   ├── index.html       # Repository information page
-│   │   └── public.key       # GPG public key
-│   └── server/
-│       └── app.js           # Main Express server
-├── package.json
-└── README.md
+│   ├── worker.js                # Cloudflare Worker entry point
+│   ├── css/                     # Stylus stylesheets
+│   ├── data/                    # Locale JSON files (en, zh-cn)
+│   ├── static/                  # Static assets (public.key, robots.txt, etc.)
+│   └── views/                   # Pug templates
+│       ├── index.pug            # Landing page
+│       ├── deb.pug              # Debian repo setup page
+│       ├── rpm.pug              # RPM repo setup page
+│       └── parts/               # Shared partials (header, footer, etc.)
+├── public/                      # Build output (served by Cloudflare)
+├── wrangler.toml                # Cloudflare Workers config
+└── package.json
 ```
 
-## Build Process
+## Build Pipeline
 
-When the `/deb` endpoint is called:
+Running `npm run build` (or `./bin/build`) executes:
 
-1. The server validates the required parameters (`releaseInfo`, `gpgKeyId`, `gpgPrivateKey`)
-2. Creates the `repos/deb` directory if it doesn't exist
-3. Sets environment variables for the build script
-4. Executes `build/build-deb.sh` which copies files from `src/deb-build` to `repos/deb`
-5. Returns the build results
+1. Fetch latest release info from GitHub API
+2. Compile Stylus → `public/index.bundle.css`
+3. Copy static assets to `public/`
+4. Compile Pug templates → HTML (for each locale)
+5. Build Debian repository metadata (`public/deb/`)
+6. Build RPM repository metadata (`public/rpm/`)
+7. Generate `sitemap.xml`
 
-## GitHub Actions Integration
+## Local Development
 
-This server is designed to work with GitHub Actions for automated repository updates. Example workflow:
+```bash
+# Install dependencies
+npm install
 
-```yaml
-- name: Update Repository
-  run: |
-    curl -X POST https://your-server.com/deb \
-      -H "Content-Type: application/json" \
-      -d '{
-        "releaseInfo": "${{ github.event.release.body }}",
-        "gpgKeyId": "${{ secrets.GPG_KEY_ID }}",
-        "gpgPrivateKey": "${{ secrets.GPG_PRIVATE_KEY }}"
-      }'
+# Start dev server at http://127.0.0.1:6069
+npm run dev
 ```
+
+The dev server (`bin/dev-server.js`) uses Express to serve pages with hot Pug rendering — no build step needed for HTML changes.
+
+For a full production build:
+
+```bash
+# Copy sample.env and fill in secrets
+cp sample.env .env
+
+# Run full build
+npm run build
+```
+
+## Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `GITHUB_TOKEN` | Yes | GitHub API token for fetching release info |
+| `GPG_KEY_ID` | No | GPG key ID for signing repo metadata |
+| `GPG_PRIVATE_KEY` | No | Base64-encoded GPG private key |
+| `DEB_FILE_PATH` | No | Local `.deb` file path (skip download) |
+| `RPM_FILE_PATH` | No | Local `.rpm` file path (skip download) |
+| `SERVER_DEV_PORT` | No | Dev server port (default: 6069) |
 
 ## Deployment
 
-### Environment Variables
+Deployment is automated via GitHub Actions (`.github/workflows/deploy-on-release.yml`):
 
-- `PORT` - Server port (default: 3000)
-- `NODE_ENV` - Environment (production/development)
+- **On push to `main`** — builds and deploys to Cloudflare Workers
+- **On `electerm-release` repository_dispatch** — triggered by new Electerm releases
+- **Manual dispatch** — via GitHub Actions UI
 
-### Production Deployment
+GitHub Secrets required:
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `GPG_KEY_ID`
+- `GPG_PRIVATE_KEY`
 
-1. **VPS Deployment**:
-```bash
-# Clone and setup
-git clone https://github.com/electerm/repos.git
-cd repos
-npm install
+## Installation Instructions
 
-# Start with PM2 (recommended)
-npm install -g pm2
-pm2 start src/server/app.js --name "electerm-repos"
-pm2 startup
-pm2 save
-```
-
-2. **Docker Deployment**:
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-3. **Nginx Reverse Proxy** (recommended):
-```nginx
-server {
-    listen 80;
-    server_name repos.electerm.org;
-    
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-## Repository URLs
-
-- **Production**: `https://repos.electerm.org/deb`
-- **Local Development**: `http://localhost:3000/deb`
-
-## Adding to APT Sources
-
-Users can add the repository to their system with:
+### Debian/Ubuntu (APT)
 
 ```bash
 # Add the GPG key
 curl -fsSL https://repos.electerm.org/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/electerm.gpg
 
 # Add the repository
-echo "deb [signed-by=/usr/share/keyrings/electerm.gpg] https://repos.electerm.org/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/electerm.gpg] https://repos.electerm.org/deb stable main" | sudo tee /etc/apt/sources.list.d/electerm.list
 
-# Update package list
+# Update and install
 sudo apt update
-
-# Install Electerm
 sudo apt install electerm
 ```
 
-## Development
-
-### Running in Development
+### Fedora/RHEL/CentOS (RPM)
 
 ```bash
-npm start
+# Import the GPG key
+sudo rpm --import https://repos.electerm.org/rpm/public.key
+
+# Add the repository
+sudo tee /etc/yum.repos.d/electerm.repo <<EOF
+[electerm]
+name=Electerm Repository
+baseurl=https://repos.electerm.org/rpm/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://repos.electerm.org/rpm/public.key
+EOF
+
+# Install
+sudo dnf install electerm   # or: sudo yum install electerm
 ```
-
-### Testing the API
-
-```bash
-# Health check
-curl http://localhost:3000/health
-
-# Test repository creation
-curl -X POST http://localhost:3000/deb \
-  -H "Content-Type: application/json" \
-  -d '{
-    "releaseInfo": "Test release",
-    "gpgKeyId": "test-key-id",
-    "gpgPrivateKey": "test-private-key"
-  }'
-```
-
-## Security Considerations
-
-- **GPG Keys**: Private keys are passed via request body and should be handled securely
-- **HTTPS**: Always use HTTPS in production
-- **Input Validation**: Server validates required parameters
-- **Environment**: Keep sensitive data in environment variables or secrets management
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Test with `npm run dev`
 5. Submit a pull request
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+[MIT](LICENSE)
 
 ## Related Projects
 
-- [Electerm](https://github.com/electerm/electerm) - Modern terminal/ssh/sftp client
-- [Electerm Website](https://electerm.html5beta.com) - Official website
-
-## Support
-
-For issues and questions:
-- GitHub Issues: [https://github.com/electerm/repos/issues](https://github.com/electerm/repos/issues)
-- Main Project: [https://github.com/electerm/electerm](https://github.com/electerm/electerm)
+- [Electerm](https://github.com/electerm/electerm) — Terminal/SSH/SFTP/Telnet/Serial/RDP/VNC/Spice client
+- [Electerm Website](https://electerm.org) — Official website
