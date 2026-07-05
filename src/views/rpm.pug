@@ -1,0 +1,115 @@
+doctype html
+html(lang=langCode)
+  head
+    title #{siteName} - #{lang.rpmTitle}
+    meta(name='description', content=lang.rpmSubtitle)
+    meta(name='keywords', content='electerm,rpm,repository,yum,dnf,setup,install,linux,terminal,ssh,fedora,centos,rhel')
+    meta(property='og:title' content='electerm - RPM Repository Setup')
+    meta(property='og:description' content=lang.rpmSubtitle)
+    meta(name='twitter:title' content='electerm - RPM Repository Setup')
+    meta(name='twitter:description' content=lang.rpmSubtitle)
+    include ./parts/react-header
+  body
+    include ./parts/header
+
+    section.repo-hero
+      .container
+        img.repo-hero-logo(src='https://electerm.org/electerm.png', alt='electerm')
+        h1 #{lang.rpmTitle}
+        p.repo-hero-tagline #{lang.rpmSubtitle}
+
+    section.repo-steps
+      .container
+        .section-header
+          h2 #{lang.rpmInstallation}
+          p #{lang.rpmInstallationSubtitle}
+
+        .steps-grid
+          .step-card
+            .step-number 1
+            .step-content
+              h3 #{lang.rpmAddRepository}
+              p #{lang.rpmAddRepositoryDesc}
+
+              .code-block
+                button.copy-button(onclick="copyToClipboard(this)") #{lang.rpmCopy}
+                pre.
+                  # Import the GPG key
+                  sudo rpm --import https://repos.electerm.org/rpm/public.key
+
+                  # Add the repository
+                  sudo tee /etc/yum.repos.d/electerm.repo <<EOF
+                  [electerm]
+                  name=Electerm Repository
+                  baseurl=https://repos.electerm.org/rpm/
+                  enabled=1
+                  gpgcheck=0
+                  repo_gpgcheck=1
+                  gpgkey=https://repos.electerm.org/rpm/public.key
+                  EOF
+
+          .step-card
+            .step-number 2
+            .step-content
+              h3 #{lang.rpmUpdateInstall}
+              p #{lang.rpmUpdateInstallDesc}
+
+              .code-block
+                button.copy-button(onclick="copyToClipboard(this)") #{lang.rpmCopy}
+                pre.
+                  # Install Electerm (dnf — Fedora, RHEL 8+, CentOS Stream)
+                  sudo dnf install electerm
+
+                  # or yum — CentOS 7, older RHEL
+                  sudo yum install electerm
+
+        .repo-success
+          .repo-success-icon ✅
+          .repo-success-text
+            h4 #{lang.rpmThatsIt}
+            p #{lang.rpmThatsItDesc}
+
+    section.repo-info
+      .container
+        .section-header
+          h2 #{lang.rpmRepositoryDetails}
+
+        .info-grid
+          .info-card
+            .info-card-label #{lang.rpmRepositoryUrl}
+            .info-card-value https://repos.electerm.org/rpm/
+          .info-card
+            .info-card-label #{lang.rpmArchitecture}
+            .info-card-value x86_64
+          .info-card
+            .info-card-label #{lang.rpmGpgKey}
+            .info-card-value
+              a(href="public.key") #{lang.rpmDownloadPublicKey}
+
+    section.repo-security
+      .container
+        .section-header
+          h2 #{lang.rpmSecurityFeatures}
+
+        .security-grid
+          .security-card
+            .security-icon 🔐
+            h4 #{lang.rpmGpgSignedTitle}
+            p #{lang.rpmGpgSignedDesc}
+          .security-card
+            .security-icon 🌐
+            h4 #{lang.rpmHttpsTransportTitle}
+            p #{lang.rpmHttpsTransportDesc}
+          .security-card
+            .security-icon 🤖
+            h4 #{lang.rpmAutomatedUpdatesTitle}
+            p #{lang.rpmAutomatedUpdatesDesc}
+          .security-card
+            .security-icon ✓
+            h4 #{lang.rpmVerifiedPackagesTitle}
+            p #{lang.rpmVerifiedPackagesDesc}
+
+    include ./parts/ethical-ads
+    include ./parts/footer
+    include ./parts/react-footer
+    include ./parts/copy-script

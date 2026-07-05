@@ -31,7 +31,8 @@
 
 - [Home Page](https://electerm.org/) - Main landing page with download links
 - [Video Guides](https://electerm.org/videos) - Tutorial videos and demos
-- [Debian Repository](https://electerm.org/deb) - APT repository setup for Debian/Ubuntu
+- [Debian Repository](https://repos.electerm.org/deb) - APT repository setup for Debian/Ubuntu
+- [RPM Repository](https://repos.electerm.org/rpm) - YUM/DNF repository setup for Fedora/RHEL/CentOS
 - [Sponsor](https://electerm.org/sponsor-electerm.html) - Support electerm development
 
 ## Download Links

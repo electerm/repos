@@ -10,6 +10,7 @@
     "build-css": "node bin/build-css.js",
     "build-html": "node bin/build-html.js",
     "deb": "node bin/build-deb.js",
+    "rpm": "node bin/build-rpm.js",
     "down": "node bin/fetch-release-info.js",
     "sitemap": "node bin/sitemap.js",
     "cp": "cp -r src/static/* public/",

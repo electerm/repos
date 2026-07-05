@@ -56,8 +56,8 @@ function createReleaseData () {
 const locales = loadLocales()
 
 export default {
-  desc: 'Electerm Debian Repository',
-  keywords: 'electerm,debian,repository,apt,setup,install,linux,terminal,ssh',
+  desc: 'Electerm Package Repositories',
+  keywords: 'electerm,debian,rpm,repository,apt,yum,dnf,setup,install,linux,terminal,ssh',
   siteName: 'electerm',
   host: process.env.HOST,
   langs: locales,

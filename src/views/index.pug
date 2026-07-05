@@ -1,12 +1,12 @@
 doctype html
 html(lang=langCode)
   head
-    title #{siteName} - Debian APT Repository
+    title #{siteName} - Package Repositories
     meta(name='description', content=desc)
     meta(name='keywords', content=keywords)
-    meta(property='og:title' content='electerm - Debian APT Repository')
+    meta(property='og:title' content='electerm - Package Repositories')
     meta(property='og:description' content=desc)
-    meta(name='twitter:title' content='electerm - Debian APT Repository')
+    meta(name='twitter:title' content='electerm - Package Repositories')
     meta(name='twitter:description' content=desc)
     include ./parts/react-header
   body
@@ -15,11 +15,13 @@ html(lang=langCode)
     section.hero
       .container
         img.hero-logo(src='https://electerm.org/electerm.png', alt='electerm')
-        h1 electerm #{lang.debTitle}
-        p.hero-tagline #{lang.debSubtitle}
+        h1 electerm #{lang.homeTitle}
+        p.hero-tagline #{lang.homeTagline}
         .hero-cta
           a.hero-btn.hero-btn-primary(href='/deb/')
-            | #{lang.heroSetupRepo}
+            | 🐧 #{lang.repoDebName}
+          a.hero-btn.hero-btn-primary(href='/rpm/')
+            | 📦 #{lang.repoRpmName}
           a.hero-btn.hero-btn-secondary(href='https://electerm.org', target='_blank', rel='noreferrer')
             | #{lang.heroVisitHome}
 
@@ -34,6 +36,11 @@ html(lang=langCode)
             h3 #{lang.repoDebName}
             p #{lang.repoDebDesc}
             a.repo-link(href='/deb/') #{lang.repoSetupLink} →
+          .repo-card
+            .repo-icon 📦
+            h3 #{lang.repoRpmName}
+            p #{lang.repoRpmDesc}
+            a.repo-link(href='/rpm/') #{lang.repoSetupLink} →
           .repo-card.repo-card-future
             .repo-icon 🚧
             h3 #{lang.repoMoreTitle}
@@ -56,6 +63,7 @@ html(lang=langCode)
             h3 #{lang.categoryResources}
             ul.link-list
               li: a(href='/deb/') #{lang.footerDebianRepo}
+              li: a(href='/rpm/') #{lang.footerRpmRepo}
               li: a(href='https://github.com/electerm/electerm/wiki', target='_blank', rel='noreferrer') #{lang.linkWiki}
               li: a(href='https://github.com/electerm/electerm/wiki/Know-issues', target='_blank', rel='noreferrer') #{lang.linkKnownIssues}
           .link-category

@@ -92,6 +92,49 @@ async function main () {
     }
   }
 
+  // Build rpm page for each locale
+  const rpmFrom = resolve(cwd, 'src/views/rpm.pug')
+
+  for (const loc of data.langs) {
+    const { slug, langCode, lang, flag, name } = loc
+
+    if (slug === '') {
+      // English → /rpm/index.html
+      const dir = resolve(cwd, 'public/rpm')
+      await fs.mkdir(dir, { recursive: true })
+      await buildPug(rpmFrom, resolve(dir, 'index.html'), {
+        ...data,
+        langCode,
+        lang,
+        langs: data.langs,
+        currFlag: flag,
+        currName: name,
+        desc: lang.rpmSubtitle,
+        url: `${h}/rpm/`,
+        currentPage: 'rpm/',
+        cssUrl: '/index.bundle.css'
+      })
+      console.log(`✅ Built /rpm/index.html (en)`)
+    } else {
+      // Other locales → /{slug}/rpm/index.html
+      const dir = resolve(cwd, `public/${slug}/rpm`)
+      await fs.mkdir(dir, { recursive: true })
+      await buildPug(rpmFrom, resolve(dir, 'index.html'), {
+        ...data,
+        langCode,
+        lang,
+        langs: data.langs,
+        currFlag: flag,
+        currName: name,
+        desc: lang.rpmSubtitle,
+        url: `${h}/${slug}/rpm/`,
+        currentPage: 'rpm/',
+        cssUrl: '/index.bundle.css'
+      })
+      console.log(`✅ Built /${slug}/rpm/index.html`)
+    }
+  }
+
   // Build privacy policy page (English only)
   const privacyFrom = resolve(cwd, 'src/views/privacy-policy.pug')
   const enLoc = data.langs.find(l => l.slug === '')

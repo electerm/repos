@@ -244,15 +244,15 @@ a:hover
 .footer-bottom-links a:hover
   color white
 
-/* ===== Deb Page ===== */
-.deb-hero
+/* ===== Repo Page (shared by deb & rpm) ===== */
+.repo-hero
   background var(--color-bg-alt)
   color var(--color-text)
   padding 60px 0 70px
   position relative
   overflow hidden
 
-.deb-hero .container
+.repo-hero .container
   position relative
   z-index 1
   display flex
@@ -260,29 +260,29 @@ a:hover
   align-items center
   text-align center
 
-.deb-hero-logo
+.repo-hero-logo
   max-width 100%
   height auto
   margin-bottom 24px
 
-.deb-hero h1
+.repo-hero h1
   font-size 2.5rem
   font-weight 800
   margin-bottom 12px
   letter-spacing -0.02em
 
-.deb-hero-tagline
+.repo-hero-tagline
   font-size 1.15rem
   color var(--color-text-secondary)
   max-width 560px
   margin-bottom 8px
   line-height 1.7
 
-.deb-features
+.repo-features
   padding 80px 0
   background var(--color-bg)
 
-.deb-steps
+.repo-steps
   padding 80px 0
   background var(--color-bg-alt)
 
@@ -367,7 +367,7 @@ a:hover
   border-color var(--color-success)
   color white
 
-.deb-success
+.repo-success
   max-width 800px
   margin 32px auto 0
   display flex
@@ -378,20 +378,20 @@ a:hover
   border 1px solid #a7f3d0
   border-radius var(--radius-lg)
 
-.deb-success-icon
+.repo-success-icon
   font-size 1.5rem
 
-.deb-success-text h4
+.repo-success-text h4
   font-size 1rem
   font-weight 600
   color #065f46
   margin-bottom 4px
 
-.deb-success-text p
+.repo-success-text p
   font-size 0.9rem
   color #047857
 
-.deb-info
+.repo-info
   padding 80px 0
   background var(--color-bg)
 
@@ -430,7 +430,7 @@ a:hover
 .info-card-value a:hover
   color var(--color-primary-dark)
 
-.deb-security
+.repo-security
   padding 80px 0
   background var(--color-bg-alt)
 
@@ -482,15 +482,15 @@ a:hover
   color var(--color-text-secondary)
 
 @media (max-width: 479px)
-  .deb-hero
+  .repo-hero
     padding 40px 0 50px
-  .deb-hero h1
+  .repo-hero h1
     font-size 1.8rem
-  .deb-hero-logo
+  .repo-hero-logo
     max-width 100%
     height auto
     margin-bottom 24px
-  .deb-hero-tagline
+  .repo-hero-tagline
     font-size 1rem
   .step-card
     flex-direction column
@@ -596,6 +596,11 @@ a:hover
 @media (min-width: 600px)
   .repos-grid
     grid-template-columns repeat(2, 1fr)
+
+@media (min-width: 1024px)
+  .repos-grid
+    grid-template-columns repeat(3, 1fr)
+    max-width 1000px
 
 .repo-card
   padding 28px 24px

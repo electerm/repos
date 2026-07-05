@@ -50,17 +50,47 @@ export default {
       }
     }
 
+    // Handle RPM repository paths - serve metadata from ASSETS, redirect .rpm files to mirror
+    if (
+      path.startsWith("/rpm/repodata/") ||
+      path === "/rpm/public.key" ||
+      path.startsWith("/cn/rpm/repodata/") ||
+      path === "/cn/rpm/public.key"
+    ) {
+      // Redirect .rpm file requests to mirror (the .rpm is not stored in the repo)
+      if (path.endsWith(".rpm")) {
+        // Extract version from filename: electerm-{version}-linux-x86_64.rpm
+        const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-(x86_64|aarch64|armv7l)\.rpm$/);
+        if (match) {
+          const version = match[1];
+          const filename = path.split("/").pop();
+          const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
+          const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+          return Response.redirect(redirectUrl, 302);
+        }
+      }
+      try {
+        return await env.ASSETS.fetch(request);
+      } catch (e) {
+        return new Response("Not found: " + path, { status: 404 });
+      }
+    }
+
     // Map clean routes to index.html files
     const routeMap = {
       "/": "/index.html",
       "/deb": "/deb/index.html",
       "/deb/": "/deb/index.html",
+      "/rpm": "/rpm/index.html",
+      "/rpm/": "/rpm/index.html",
       "/privacy-policy": "/privacy-policy/index.html",
       "/privacy-policy/": "/privacy-policy/index.html",
       "/cn": "/cn/index.html",
       "/cn/": "/cn/index.html",
       "/cn/deb": "/cn/deb/index.html",
       "/cn/deb/": "/cn/deb/index.html",
+      "/cn/rpm": "/cn/rpm/index.html",
+      "/cn/rpm/": "/cn/rpm/index.html",
     };
 
     if (routeMap[path]) {

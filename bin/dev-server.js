@@ -96,6 +96,18 @@ function createServer () {
     desc: data.langs.find(l => l.slug === 'cn').lang.debSubtitle
   }))
 
+  // Rpm pages
+  app.get('/rpm', (req, res) => renderPage(req, res, 'rpm', '', {
+    url: `${h}/rpm/`,
+    currentPage: 'rpm/',
+    desc: data.langs.find(l => l.slug === '').lang.rpmSubtitle
+  }))
+  app.get('/cn/rpm', (req, res) => renderPage(req, res, 'rpm', 'cn', {
+    url: `${h}/cn/rpm/`,
+    currentPage: 'rpm/',
+    desc: data.langs.find(l => l.slug === 'cn').lang.rpmSubtitle
+  }))
+
   // Privacy policy page (English only)
   app.get('/privacy-policy', (req, res) => renderPage(req, res, 'privacy-policy', '', { url: `${h}/privacy-policy/`, currentPage: 'privacy-policy' }))
 

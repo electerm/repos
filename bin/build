@@ -10,4 +10,5 @@ npm run build-css
 npm run cp
 HOST=https://repos.electerm.org npm run build-html
 npm run deb
+npm run rpm
 npm run sitemap

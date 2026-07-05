@@ -43,6 +43,22 @@ async function buildSiteMap () {
     } catch (e) {}
   }
 
+  // Rpm pages for each locale
+  for (const loc of data.langs) {
+    const rpmPath = loc.slug
+      ? `public/${loc.slug}/rpm/index.html`
+      : 'public/rpm/index.html'
+    try {
+      const state = await fs.stat(resolve(cwd, rpmPath))
+      urls.push({
+        loc: loc.slug ? `${host}/${loc.slug}/rpm/` : `${host}/rpm/`,
+        lastmod: dayjs(state.mtime).format(fmt),
+        changefreq: 'weekly',
+        priority: 0.9
+      })
+    } catch (e) {}
+  }
+
   // Privacy policy page (English only)
   try {
     const state = await fs.stat(resolve(cwd, 'public/privacy-policy/index.html'))
