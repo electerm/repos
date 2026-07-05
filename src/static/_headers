@@ -1,0 +1,5 @@
+/rpm/public.key
+  Content-Type: application/pgp-keys
+
+/deb/public.key
+  Content-Type: application/pgp-keys

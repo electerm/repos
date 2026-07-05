@@ -8,7 +8,7 @@ export default {
       return Response.redirect(redirectUrl, 308);
     }
 
-    let path = url.pathname;
+    const path = url.pathname;
 
     // API endpoint for country detection
     if (path === "/api/country") {
@@ -18,118 +18,35 @@ export default {
       });
     }
 
-    // Handle Debian APT paths - serve metadata from ASSETS, redirect .deb files to mirror
-    if (
-      path.startsWith("/deb/dists/") ||
-      path.startsWith("/deb/pool/") ||
-      path === "/deb/public.key" ||
-      path === "/deb/InRelease" ||
-      path === "/deb/Release.gpg"
-    ) {
-      // Redirect .deb file requests to mirror (the .deb is not stored in the pool)
-      if (path.endsWith(".deb")) {
-        // Extract version from filename: electerm-{version}-linux-amd64.deb
-        const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-amd64\.deb$/);
-        if (match) {
-          const version = match[1];
-          const filename = path.split("/").pop();
-          const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
-          const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
-          return Response.redirect(redirectUrl, 302);
-        }
-      }
-      try {
-        const response = await env.ASSETS.fetch(request);
-        // Fix content-type for public.key — Cloudflare defaults to application/vnd.apple.keynote
-        if (path === "/deb/public.key" && response.status === 200) {
-          const headers = new Headers(response.headers);
-          headers.set("content-type", "application/pgp-keys");
-          return new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers
-          });
-        }
-        return response;
-      } catch (e) {
-        return new Response("Not found: " + path, { status: 404 });
+    // Redirect .deb file requests to mirror (the .deb is not stored in the pool)
+    // Static metadata files (dists/, pool/, public.key, InRelease, Release.gpg)
+    // are served automatically by Cloudflare static assets before the worker runs.
+    if (path.endsWith(".deb")) {
+      const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-amd64\.deb$/);
+      if (match) {
+        const version = match[1];
+        const filename = path.split("/").pop();
+        const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
+        const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+        return Response.redirect(redirectUrl, 302);
       }
     }
 
-    // Handle RPM repository paths - serve metadata from ASSETS, redirect .rpm files to mirror
-    if (
-      path.startsWith("/rpm/repodata/") ||
-      path === "/rpm/public.key"
-    ) {
-      // Redirect .rpm file requests to mirror (the .rpm is not stored in the repo)
-      if (path.endsWith(".rpm")) {
-        // Extract version from filename: electerm-{version}-linux-x86_64.rpm
-        const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-(x86_64|aarch64|armv7l)\.rpm$/);
-        if (match) {
-          const version = match[1];
-          const filename = path.split("/").pop();
-          const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
-          const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
-          return Response.redirect(redirectUrl, 302);
-        }
-      }
-      try {
-        const response = await env.ASSETS.fetch(request);
-        // Fix content-type for public.key — Cloudflare defaults to application/vnd.apple.keynote
-        if (path === "/rpm/public.key" && response.status === 200) {
-          const headers = new Headers(response.headers);
-          headers.set("content-type", "application/pgp-keys");
-          return new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers
-          });
-        }
-        return response;
-      } catch (e) {
-        return new Response("Not found: " + path, { status: 404 });
+    // Redirect .rpm file requests to mirror (the .rpm is not stored in the repo)
+    // Static metadata files (repodata/, public.key) are served automatically
+    // by Cloudflare static assets before the worker runs.
+    if (path.endsWith(".rpm")) {
+      const match = path.match(/electerm-([\d.]+(?:-[a-z0-9.]+)?)-linux-(x86_64|aarch64|armv7l)\.rpm$/);
+      if (match) {
+        const version = match[1];
+        const filename = path.split("/").pop();
+        const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
+        const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+        return Response.redirect(redirectUrl, 302);
       }
     }
 
-    // Map clean routes to index.html files
-    const routeMap = {
-      "/": "/index.html",
-      "/deb": "/deb/index.html",
-      "/deb/": "/deb/index.html",
-      "/rpm": "/rpm/index.html",
-      "/rpm/": "/rpm/index.html",
-      "/privacy-policy": "/privacy-policy/index.html",
-      "/privacy-policy/": "/privacy-policy/index.html",
-      "/cn": "/cn/index.html",
-      "/cn/": "/cn/index.html",
-      "/cn/deb": "/cn/deb/index.html",
-      "/cn/deb/": "/cn/deb/index.html",
-      "/cn/rpm": "/cn/rpm/index.html",
-      "/cn/rpm/": "/cn/rpm/index.html",
-    };
-
-    if (routeMap[path]) {
-      try {
-        return await env.ASSETS.fetch(new URL(routeMap[path], request.url));
-      } catch (e) {
-        return new Response("Not found: " + path, { status: 404 });
-      }
-    }
-
-    // Handle other paths - try adding .html
-    if (!path.endsWith(".html") && !path.includes(".")) {
-      path = path + ".html";
-    }
-
-    try {
-      return await env.ASSETS.fetch(request);
-    } catch (e) {
-      // Fallback
-      try {
-        return await env.ASSETS.fetch(new URL("/index.html", request.url));
-      } catch (e2) {
-        return new Response("Error: " + e2.message, { status: 500 });
-      }
-    }
+    // Fallback: let Cloudflare serve static assets or return 404
+    return new Response("Not found: " + path, { status: 404 });
   },
 };
