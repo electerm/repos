@@ -3,57 +3,91 @@ script(type='module').
   var heroEl = document.getElementById('hero-anim')
   if (heroEl) new HeroAnimate(heroEl)
 
-#cookie-consent(style='display:none')
-  .cookie-consent-inner
-    p.cookie-consent-text This website uses cookies for analytics and personalized ads. By clicking "Accept", you consent to the use of cookies for analytics and advertising purposes, including Google's use of IP-based solutions as described in our #[a(href='/privacy-policy/') Privacy Policy].
-    .cookie-consent-actions
-      button#cookie-reject Reject
-      button#cookie-accept Accept
-
 script.
   (function(){
-    var REGULATED = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','CH','GB'];
-    var consent = localStorage.getItem('cookie-consent');
-    if (consent === 'accepted') {
-      loadGoogleScripts();
-      return;
-    }
-    if (consent === 'rejected') {
-      return;
-    }
-    fetch('/api/country').then(function(r){ return r.json(); }).then(function(d){
-      var cc = (d.country || '').toUpperCase();
-      if (cc && REGULATED.indexOf(cc) === -1) {
-        localStorage.setItem('cookie-consent', 'accepted');
-        loadGoogleScripts();
-      } else {
-        document.getElementById('cookie-consent').style.display = 'block';
+    // === Shared single country fetch for all consumers ===
+    window.__countryPromise = fetch('/api/country')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ return (d.country || '').toUpperCase(); })
+      .catch(function(){ return null; });
+
+    // === Google Analytics (loaded directly, no consent banner) ===
+    var s1 = document.createElement('script');
+    s1.async = true;
+    s1.src = 'https://www.googletagmanager.com/gtag/js?id=G-LCY5SM7M8J';
+    document.head.appendChild(s1);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LCY5SM7M8J');
+
+    // === EthicalAds ===
+    window.__countryPromise.then(function(cc){
+      // Show the ad container before loading the script
+      // so ethicalads finds the elements when it initialises
+      var adWrapper = document.querySelector('.ethical-ad-wrapper');
+      if (adWrapper) adWrapper.classList.add('ethical-ad-active');
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://media.ethicalads.io/media/client/ethicalads.min.js';
+      document.body.appendChild(s);
+    });
+
+    // === EthicalAds spacing: keep the fixed ad bar/card from covering footer content ===
+    (function(){
+      var wrapper = document.querySelector('.ethical-ad-wrapper');
+      var footer = document.querySelector('footer.site-footer');
+      if (!wrapper) return;
+      var BP = 1420;
+      function apply() {
+        var h = wrapper.offsetHeight || 0;
+        var vw = window.innerWidth || document.documentElement.clientWidth;
+        if (vw < BP) {
+          // < 1420px: full-width fixed bar pinned to viewport bottom.
+          // Reserve space on <body> so the bar never hides the footer.
+          document.body.style.paddingBottom = h + 'px';
+          if (footer) {
+            footer.style.paddingBottom = '';
+            footer.style.setProperty('--watermark-height', '0px');
+            footer.style.setProperty('--watermark-bottom', '0px');
+            footer.style.setProperty('--watermark-bg-size', '0px');
+          }
+        } else {
+          // >= 1420px: corner card fixed 24px above the viewport bottom-right.
+          // Reserve space inside the footer and show watermark in the reserved area.
+          document.body.style.paddingBottom = '';
+          if (footer) {
+            if (h > 0) {
+              var ph = (h + 32);            // total extra padding
+              // watermark element takes 60% of padding, centred
+              var wh = Math.round(ph * 0.6);
+              var wb = Math.round((ph - wh) / 2);
+              // logo bg-width ~1.2x of padding height
+              var bg = Math.round(ph * 1.2);
+              footer.style.paddingBottom = ph + 'px';
+              footer.style.setProperty('--watermark-height', wh + 'px');
+              footer.style.setProperty('--watermark-bottom', wb + 'px');
+              footer.style.setProperty('--watermark-bg-size', bg + 'px');
+            } else {
+              footer.style.paddingBottom = '';
+              footer.style.setProperty('--watermark-height', '0px');
+              footer.style.setProperty('--watermark-bottom', '0px');
+              footer.style.setProperty('--watermark-bg-size', '0px');
+            }
+          }
+        }
       }
-    }).catch(function(){
-      document.getElementById('cookie-consent').style.display = 'block';
-    });
-    document.getElementById('cookie-accept').addEventListener('click', function() {
-      localStorage.setItem('cookie-consent', 'accepted');
-      document.getElementById('cookie-consent').style.display = 'none';
-      loadGoogleScripts();
-    });
-    document.getElementById('cookie-reject').addEventListener('click', function() {
-      localStorage.setItem('cookie-consent', 'rejected');
-      document.getElementById('cookie-consent').style.display = 'none';
-    });
-    function loadGoogleScripts() {
-      var s1 = document.createElement('script');
-      s1.async = true;
-      s1.src = 'https://www.googletagmanager.com/gtag/js?id=G-LCY5SM7M8J';
-      document.head.appendChild(s1);
-      var s2 = document.createElement('script');
-      s2.async = true;
-      s2.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3871790631789822';
-      s2.crossOrigin = 'anonymous';
-      document.head.appendChild(s2);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-LCY5SM7M8J');
-    }
+      if (window.ResizeObserver) {
+        new ResizeObserver(function(){ apply(); }).observe(wrapper);
+      }
+      var rt = null;
+      window.addEventListener('resize', function(){
+        if (rt) clearTimeout(rt);
+        rt = setTimeout(apply, 100);
+      });
+      apply();
+      // ethicalads loads async; re-measure once creatives likely rendered
+      setTimeout(apply, 1500);
+      setTimeout(apply, 3000);
+    })();
   })();
