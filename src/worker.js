@@ -24,12 +24,7 @@ export default {
       path.startsWith("/deb/pool/") ||
       path === "/deb/public.key" ||
       path === "/deb/InRelease" ||
-      path === "/deb/Release.gpg" ||
-      path.startsWith("/cn/deb/dists/") ||
-      path.startsWith("/cn/deb/pool/") ||
-      path === "/cn/deb/public.key" ||
-      path === "/cn/deb/InRelease" ||
-      path === "/cn/deb/Release.gpg"
+      path === "/deb/Release.gpg"
     ) {
       // Redirect .deb file requests to mirror (the .deb is not stored in the pool)
       if (path.endsWith(".deb")) {
@@ -44,7 +39,18 @@ export default {
         }
       }
       try {
-        return await env.ASSETS.fetch(request);
+        const response = await env.ASSETS.fetch(request);
+        // Fix content-type for public.key — Cloudflare defaults to application/vnd.apple.keynote
+        if (path === "/deb/public.key" && response.status === 200) {
+          const headers = new Headers(response.headers);
+          headers.set("content-type", "application/pgp-keys");
+          return new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers
+          });
+        }
+        return response;
       } catch (e) {
         return new Response("Not found: " + path, { status: 404 });
       }
@@ -53,9 +59,7 @@ export default {
     // Handle RPM repository paths - serve metadata from ASSETS, redirect .rpm files to mirror
     if (
       path.startsWith("/rpm/repodata/") ||
-      path === "/rpm/public.key" ||
-      path.startsWith("/cn/rpm/repodata/") ||
-      path === "/cn/rpm/public.key"
+      path === "/rpm/public.key"
     ) {
       // Redirect .rpm file requests to mirror (the .rpm is not stored in the repo)
       if (path.endsWith(".rpm")) {
@@ -70,7 +74,18 @@ export default {
         }
       }
       try {
-        return await env.ASSETS.fetch(request);
+        const response = await env.ASSETS.fetch(request);
+        // Fix content-type for public.key — Cloudflare defaults to application/vnd.apple.keynote
+        if (path === "/rpm/public.key" && response.status === 200) {
+          const headers = new Headers(response.headers);
+          headers.set("content-type", "application/pgp-keys");
+          return new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers
+          });
+        }
+        return response;
       } catch (e) {
         return new Response("Not found: " + path, { status: 404 });
       }
