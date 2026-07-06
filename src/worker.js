@@ -46,7 +46,26 @@ export default {
       }
     }
 
-    // Fallback: let Cloudflare serve static assets or return 404
-    return new Response("Not found: " + path, { status: 404 });
+    // Fallback: serve the static 404 page with proper 404 status
+    return serveNotFound(env);
   },
 };
+
+async function serveNotFound(env) {
+  try {
+    const notFoundUrl = new URL("https://placeholder/404.html");
+    const res = await env.ASSETS.fetch(new Request(notFoundUrl));
+    if (res.ok) {
+      return new Response(res.body, {
+        status: 404,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-cache",
+        },
+      });
+    }
+  } catch (_) {
+    // fall through to plain text fallback
+  }
+  return new Response("Not found", { status: 404 });
+}

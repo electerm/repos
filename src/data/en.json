@@ -117,6 +117,12 @@
     "footerPrivacyPolicy": "Privacy Policy",
     "footerDocumentation": "Documentation",
     "footerWiki": "Wiki",
-    "footerAuthor": "Author"
+    "footerAuthor": "Author",
+
+    "notFoundTitle": "Page Not Found",
+    "notFoundMessage": "404",
+    "notFoundDescription": "The page you are looking for doesn't exist or has been moved.",
+    "notFoundBackHome": "Back to Home",
+    "notFoundGoRepo": "Browse Repositories"
   }
 }

@@ -117,6 +117,12 @@
     "footerPrivacyPolicy": "隐私政策",
     "footerDocumentation": "文档",
     "footerWiki": "Wiki",
-    "footerAuthor": "作者"
+    "footerAuthor": "作者",
+
+    "notFoundTitle": "页面未找到",
+    "notFoundMessage": "404",
+    "notFoundDescription": "您访问的页面不存在或已被移动。",
+    "notFoundBackHome": "返回首页",
+    "notFoundGoRepo": "浏览仓库"
   }
 }

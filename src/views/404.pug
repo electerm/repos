@@ -1,0 +1,29 @@
+doctype html
+html(lang=langCode)
+  head
+    title #{siteName} - #{lang.notFoundTitle}
+    meta(name='description', content=lang.notFoundDescription)
+    meta(name='keywords', content=keywords)
+    meta(property='og:title' content='electerm - 404')
+    meta(property='og:description' content=lang.notFoundDescription)
+    meta(name='twitter:title' content='electerm - 404')
+    meta(name='twitter:description' content=lang.notFoundDescription)
+    meta(name='robots' content='noindex, follow')
+    include ./parts/react-header
+  body
+    include ./parts/header
+
+    section.not-found-page
+      .container
+        .not-found-content
+          .not-found-code #{lang.notFoundMessage}
+          h1.not-found-title #{lang.notFoundTitle}
+          p.not-found-desc #{lang.notFoundDescription}
+          .not-found-actions
+            a.hero-btn.hero-btn-primary(href='/')
+              | ← #{lang.notFoundBackHome}
+            a.hero-btn.hero-btn-secondary(href='/deb/')
+              | 🐧 #{lang.notFoundGoRepo}
+
+    include ./parts/footer
+    include ./parts/react-footer

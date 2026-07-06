@@ -154,6 +154,23 @@ async function main () {
   })
   console.log(`✅ Built /privacy-policy/index.html`)
 
+  // Build 404 page (English only — served by worker for all not-found requests)
+  const notFoundFrom = resolve(cwd, 'src/views/404.pug')
+  const enNotFound = data.langs.find(l => l.slug === '')
+  await buildPug(notFoundFrom, resolve(cwd, 'public/404.html'), {
+    ...data,
+    langCode: enNotFound.langCode,
+    lang: enNotFound.lang,
+    langs: data.langs,
+    currFlag: enNotFound.flag,
+    currName: enNotFound.name,
+    desc: enNotFound.lang.notFoundDescription,
+    url: `${h}/`,
+    currentPage: '',
+    cssUrl: '/index.bundle.css'
+  })
+  console.log(`✅ Built /404.html`)
+
   const { version } = data
   await fs.writeFile(resolve(cwd, 'public/version.html'), version)
 }
