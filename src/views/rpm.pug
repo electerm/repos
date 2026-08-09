@@ -38,7 +38,7 @@ html(lang=langCode)
                   sudo rpm --import https://repos.electerm.org/rpm/public.key
 
                   # Add the repository
-                  sudo tee /etc/yum.repos.d/electerm.repo <<EOF
+                  sudo tee /etc/yum.repos.d/electerm.repo &lt;&lt;EOF
                   [electerm]
                   name=Electerm Repository
                   baseurl=https://repos.electerm.org/rpm/
