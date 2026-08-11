@@ -1,0 +1,6 @@
+//- Ads slot — dispatches to the active ad network configured in data (adProvider).
+//-  Default network is EthicalAds; set adProvider: 'carbon' to use Carbon Ads.
+if adProvider === 'carbon'
+  include carbon-ads
+else
+  include ethical-ads

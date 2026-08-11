@@ -34,9 +34,11 @@ function createReleaseData () {
         mac: {},
         windows: {}
       },
-      version: '0.0.0'
+      version: '0.0.0',
+      starCount: 0
     }
   }
+  const starCount = data.starCount
   const assets = data.release.assets
   const version = data.release.tag_name
   const releaseNote = data.release.body.replace(/\r?\n-{3,}\r?\n\r?\nDownload下载:.*$/, '')
@@ -49,7 +51,8 @@ function createReleaseData () {
       mac: {},
       windows: {}
     },
-    version
+    version,
+    starCount
   }
 }
 
@@ -60,6 +63,9 @@ export default {
   keywords: 'electerm,debian,rpm,repository,apt,yum,dnf,setup,install,linux,terminal,ssh',
   siteName: 'electerm',
   host: process.env.HOST,
+  // Ads network switch. 'ethical' (EthicalAds) is the default network;
+  // set to 'carbon' to serve Carbon Ads site-wide.
+  adProvider: 'carbon',
   langs: locales,
   ...createReleaseData()
 }
