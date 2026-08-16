@@ -65,7 +65,7 @@ export default {
   host: process.env.HOST,
   // Ads network switch. 'ethical' (EthicalAds) is the default network;
   // set to 'carbon' to serve Carbon Ads site-wide.
-  adProvider: 'carbon',
+  adProvider: 'ethical',
   langs: locales,
   ...createReleaseData()
 }
