@@ -11,8 +11,6 @@
 [![许可证: MIT](https://img.shields.io/badge/许可证-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Electerm](https://img.shields.io/badge/Electerm-仓库-blue)](https://repos.electerm.org)
 
-[English](README.md) | [简体中文](README.cn.md)
-
 [Electerm](https://github.com/electerm/electerm) 的官方软件包仓库托管项目 — 终端/SSH/SFTP/Telnet/串口/RDP/VNC/Spice 客户端。
 
 线上地址：**<https://repos.electerm.org>**
@@ -172,7 +170,6 @@ sudo dnf install electerm   # 或：sudo yum install electerm
 3. 进行修改
 4. 使用 `npm run dev` 测试
 5. 提交 Pull Request
-
 
 ## 关于 electerm
 
