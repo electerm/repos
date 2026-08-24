@@ -11,8 +11,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Electerm](https://img.shields.io/badge/Electerm-Repo-blue)](https://repos.electerm.org)
 
-[English](README.md) | [简体中文](README.cn.md)
-
 Official package repository hosting for [Electerm](https://github.com/electerm/electerm) — a terminal/SSH/SFTP/Telnet/Serial/RDP/VNC/Spice client.
 
 Live at **<https://repos.electerm.org>**
@@ -172,7 +170,6 @@ sudo dnf install electerm   # or: sudo yum install electerm
 3. Make your changes
 4. Test with `npm run dev`
 5. Submit a pull request
-
 
 ## About electerm
 
