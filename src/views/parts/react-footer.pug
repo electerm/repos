@@ -1,3 +1,24 @@
+// Importmap for three.js — consumed at runtime by /js/hero-3d-logo.js.
+// Must appear before any module script that imports 'three'.
+script(type='importmap').
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+
+script(type='module').
+  import { Hero3DLogo } from '#{host}/js/hero-3d-logo.js'
+  var logo = document.querySelector('.hero-logo')
+  if (logo) {
+    try {
+      new Hero3DLogo(logo, {
+        modelUrl: 'https://cdn.jsdelivr.net/gh/electerm/electerm-resource@master/static/images/electerm.glb'
+      })
+    } catch (e) { console.warn('[hero-3d-logo] init failed, keeping PNG logo', e) }
+  }
+
 script(type='module').
   import HeroAnimate from '#{host}/js/animate.js'
   var heroEl = document.getElementById('hero-anim')
