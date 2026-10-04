@@ -1,6 +1,32 @@
+// First-party mirror endpoints for GitHub release assets.
+//
+// .deb/.rpm downloads used to be redirected to mirror.electerm.org, which in
+// turn forwarded to the community proxy gh-proxy.org. That proxy is unreliable
+// (frequent timeouts), so we now redirect straight to first-party CDNs:
+//   - Mainland China  -> AtomGit official mirror (domestic CDN, fast/stable in CN)
+//   - everywhere else -> Cloudflare R2 (electerm-store.html5beta.com)
+const ATOMGIT_RELEASE_BASE =
+  "https://atomgit.com/electerm/electerm/releases/download";
+const R2_BASE = "https://electerm-store.html5beta.com/r";
+
+/**
+ * Build the download URL of a release asset, choosing a mirror by client country.
+ * @param {string} version - release version without the leading "v", e.g. "5.5.66"
+ * @param {string} filename - release asset file name
+ * @param {string} country - ISO 3166-1 alpha-2 country code from request.cf
+ * @returns {string} absolute download URL
+ */
+function releaseAssetUrl(version, filename, country) {
+  const isCN = String(country || "").toUpperCase() === "CN";
+  return isCN
+    ? `${ATOMGIT_RELEASE_BASE}/v${version}/${filename}`
+    : `${R2_BASE}/${filename}`;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const country = (request.cf && request.cf.country) || "";
 
     // Redirect all requests from electerm-repos.html5beta.com to repos.electerm.org
     if (url.hostname === "electerm-repos.html5beta.com") {
@@ -26,8 +52,7 @@ export default {
       if (match) {
         const version = match[1];
         const filename = path.split("/").pop();
-        const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
-        const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+        const redirectUrl = releaseAssetUrl(version, filename, country);
         return Response.redirect(redirectUrl, 302);
       }
     }
@@ -40,8 +65,7 @@ export default {
       if (match) {
         const version = match[1];
         const filename = path.split("/").pop();
-        const realUrl = `https://github.com/electerm/electerm/releases/download/v${version}/${filename}`;
-        const redirectUrl = `https://mirror.electerm.org/${realUrl}`;
+        const redirectUrl = releaseAssetUrl(version, filename, country);
         return Response.redirect(redirectUrl, 302);
       }
     }
